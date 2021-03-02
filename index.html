@@ -4,17 +4,25 @@
         <title>Flappy Bird Replica by Darren</title>
     </head>
 
-    <style>
+    <style type="text/css">
         canvas{
             border: 1px solid black;
             display: block;
             margin: 0 auto;
         }
+        .unselectable {
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+}
     </style>
 
     <body>
         <canvas id="myCanvas" width="320" height ="480"></canvas>
-
+        <p></p>
+        <center><img class="unselectable" src="img\note.png"></center>
         <script src="game.js"></script>
 
     </body>
