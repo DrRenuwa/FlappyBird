@@ -37,6 +37,7 @@ document.addEventListener("click", function(evt) {
             gameState.current = gameState.game;
             break;
         case gameState.game:
+            flapSound.currentTime = 0;  //RESETS AUDIO FILE FOR WHEN USER SPAM CLICKS
             flapSound.play();
             bird.flap();
             break;  
@@ -128,7 +129,9 @@ const bird = {
     },
 
     flap: function() {
-        this.speed = -this.jump;
+        if(this.y >= 0) {   //STOPS USER FROM FLYING ABOVE CANVAS
+            this.speed = -this.jump;
+        }
     },
 
     update: function() {
