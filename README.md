@@ -1,4 +1,4 @@
 # Flappy Bird
-This is just a replica. The original game idea is not by me.
+This is just Darren's version of the game. The original idea is not by me.
 
 Created mostly Javascript and HTML5
