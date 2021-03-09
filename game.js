@@ -30,8 +30,9 @@ document.addEventListener("click", function(evt) {
                 //GAME RESETS ONLY IF USER CLICKS INSIDE START BUTTON
             if(x >= startButton.x && x <= startButton.x + startButton.w &&
                 y >= startButton.y && y <= startButton.y + startButton.h) {
-                    bird.speedReset();
+                    bird.reset();
                     pipes.reset();
+                    score.reset();
                     gameState.current = gameState.getReady
                 }
             break;
@@ -158,7 +159,7 @@ const bird = {
         }
     },
 
-    speedReset: function() {
+    reset: function() {
         this.speed = 0;
     }
 }
@@ -206,16 +207,29 @@ const pipes = {
                 y: this.maxYPos * (Math.random() + 1)   //GENERATES PIPE AT RANDOM Y POSITIONS BETWEEN -150 AND -300
             });
         }
+
         for(let i = 0; i < this.position.length; i++) {     
             let p = this.position[i];
 
             p.x -= this.dx;
             let bottomPipeYPos = p.y + this.h + this.gap;
 
-            if(bird.x + bird.radius) {
+            if((bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && 
+                bird.y + bird.radius > p.y && bird.y - bird.radius < p.y + this.h) 
+                ||  //GAME OVER IF BIRD TOUCHES TOP PIPE OR BOTTOM PIPE
+                (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && 
+                bird.y + bird.radius > bottomPipeYPos && bird.y - bird.radius < 
+                bottomPipeYPos + this.h)) {
+                    gameState.current = gameState.over;
+                }
 
+            //GARBAGE SCORING SYSTEM NEEDS OPTIMIZING
+            if(p.x == bird.x - bird.radius*5) {
+                score.value += 1;
+                score.best = Math.max(score.value, score.best);
+                localStorage.setItem("best", score.best);          
             }
-            
+
             if(p.x + this.w <= 0) {     //REMOVE PIPES OUT OF THE CANVAS
                 this.position.shift();
             }
@@ -224,6 +238,67 @@ const pipes = {
 
     reset: function() {
         this.position = [];
+    }
+}
+
+const score = {
+    best: parseInt(localStorage.getItem("best")) || 0, 
+    value: 0,
+
+    draw: function() {
+        ctx.fillStyle = "#FFF";
+        ctx.strokeStyle = "#000";
+
+        if(gameState.current == gameState.game) {
+            ctx.lineWidth = 2;
+            ctx.font = "35px Teko";
+            ctx.fillText(this.value, cvs.width/2, 50);
+            ctx.strokeText(this.value, cvs.width/2, 50);
+        }
+        else if(gameState.current == gameState.over) {
+            ctx.font = "25px Teko";
+            ctx.fillText(this.value, 225, 186);
+            ctx.strokeText(this.value, 225, 186);
+            ctx.fillText(this.best, 225, 228);
+            ctx.strokeText(this.best, 225, 228);
+        }
+    },
+
+    reset: function() {
+        this.value = 0;
+    }
+}
+
+const medal = {
+    sX : 359,
+    sY : 157,
+    x : 72,
+    y : 175,
+    width : 45,
+    height : 45,
+    
+    draw: function() {
+
+        if(gameState.current == gameState.over && score.value >= 5 && score.value <= 9){
+            ctx.drawImage(sprite, this.sX, this.sY, this.width, 
+                this.height, this.x, this.y, this.width, this.height);
+        }
+        
+        if(gameState.current == gameState.over && score.value >= 10 && score.value <= 19) {
+            ctx.drawImage(sprite, this.sX, this.sY - 46, this.width, 
+                this.height, this.x, this.y, this.width, this.height);
+        }
+        
+        if(gameState.current == gameState.over && score.value >= 20 && score.value <= 29) {
+            ctx.drawImage(sprite, this.sX - 48, this.sY, this.width, 
+                this.height, this.x, this.y, this.width, this.height);
+        }
+       
+        if(gameState.current == gameState.over && score.value > 29) {
+            ctx.drawImage(sprite, this.sX - 48, this.sY - 46, this.width, 
+                this.height, this.x, this.y, this.width, this.height);
+        }
+        
     }
 }
 
@@ -278,6 +353,8 @@ function draw() {
     bird.draw();
     readyMessage.draw();
     loseMessage.draw();
+    score.draw();
+    medal.draw();
 }
 
 function update() {
