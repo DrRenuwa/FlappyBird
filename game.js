@@ -7,6 +7,21 @@ const DEGREE = Math.PI/180;    //USED FOR BIRD ROTATION ANIMATION
 const sprite = new Image();
 sprite.src = "img/sprite.png";
 
+const scoreSound = new Audio();
+scoreSound.src = "audio/sfx_point.wav";
+
+const flapSound = new Audio();
+flapSound.src = "audio/sfx_flap.wav";
+
+const hitSound = new Audio();
+hitSound.src = "audio/sfx_hit.wav";
+
+const swooshSound = new Audio();
+swooshSound.src = "audio/sfx_swooshing.wav";
+
+const dieSound = new Audio();
+dieSound.src = "audio/sfx_die.wav";
+
 const startButton = {
     x: 120,
     y: 263,
@@ -18,11 +33,13 @@ const startButton = {
 document.addEventListener("click", function(evt) {
     switch (gameState.current) {
         case gameState.getReady:
+            swooshSound.play();
             gameState.current = gameState.game;
             break;
         case gameState.game:
+            flapSound.play();
             bird.flap();
-            break;
+            break;  
         case gameState.over:
             let rect = cvs.getBoundingClientRect();  //TRACKS THE POSITION OF CANVAS WHEN SCROLLING
             let x = evt.clientX - rect.left;
@@ -134,6 +151,7 @@ const bird = {
             if(this.y + this.h/2 >= cvs.height - foreground.h){
                 this.y = cvs.height - foreground.h - this.h/2;
                 if(gameState.current == gameState.game){
+                    dieSound.play();
                     gameState.current = gameState.over;
                 }  
             }
@@ -220,12 +238,14 @@ const pipes = {
                 (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && 
                 bird.y + bird.radius > bottomPipeYPos && bird.y - bird.radius < 
                 bottomPipeYPos + this.h)) {
+                    hitSound.play();
                     gameState.current = gameState.over;
                 }
 
             //GARBAGE SCORING SYSTEM NEEDS OPTIMIZING
             if(p.x == bird.x - bird.radius*5) {
                 score.value += 1;
+                scoreSound.play();
                 score.best = Math.max(score.value, score.best);
                 localStorage.setItem("best", score.best);          
             }
