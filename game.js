@@ -29,7 +29,7 @@ const startButton = {
     h: 29
 }
 
-//READS THE USER'S CLICK FOR DIFFERENT ACTIONS DEPENDIUNG ON THE GAME STATE
+//READS THE USER'S CLICK FOR DIFFERENT ACTIONS DEPENDING ON THE GAME STATE
 document.addEventListener("click", function(evt) {
     switch (gameState.current) {
         case gameState.getReady:
@@ -42,7 +42,7 @@ document.addEventListener("click", function(evt) {
             bird.flap();
             break;  
         case gameState.over:
-            let rect = cvs.getBoundingClientRect();  //TRACKS THE POSITION OF CANVAS WHEN SCROLLING
+            let rect = cvs.getBoundingClientRect();  //TRACKS THE POSITION OF CANVAS
             let x = evt.clientX - rect.left;
             let y = evt.clientY - rect.top;
                 //GAME RESETS ONLY IF USER CLICKS INSIDE START BUTTON
@@ -82,7 +82,7 @@ const foreground = {
     x : 0,
     y : cvs.height - 112,
 
-    dx: 2,  //SPEED THAT FOREGROUND IS SHIFTING TO THE LEFT
+    dx: 2,  //SPEED OF FOREGROUND MOVING TO THE LEFT
 
     draw: function() {
         ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, 
@@ -94,7 +94,7 @@ const foreground = {
 
     update: function() {
         if(gameState.current == gameState.game) {      //FOREGROUND ONLY MOVES DURING GAME STATE
-            this.x = (this.x -this.dx) % (this.w/2);    //MODULO RESETS THE X POSITION BACK TO 0
+            this.x = (this.x -this.dx) % (this.w/2);    //MODULO RESETS THE SPRITE POSITION BACK TO 0
         }
     }
 }
@@ -108,12 +108,12 @@ const bird = {
     w: 34,
     h: 26,
 
-    radius: 12, //RADIUS THAT THE BIRD CAN COLLIDE WTIH PIPES
+    radius: 12, //RADIUS OF THE BIRD THAT CAN COLLIDE WTIH PIPES
 
     frame: 0,
 
     speed: 0,
-    gravity: 0.25,  //SPEED THAT BIRD IS ACCELERATING DOWNWARDS
+    gravity: 0.25,  //SPEED THAT THE BIRD IS ACCELERATING DOWNWARDS
     jump: 4.5,      //DISTANCE THAT THE BIRD MOVES UPWARDS WHEN USER CLICKS
     rotation: 0,
 
@@ -199,7 +199,7 @@ const pipes = {
     gap: 85,    //DISTANCE BETWEEN TOP AND BOTTOM PIPE
     w  : 53,
     h  : 400,
-    dx : 2,     //SPEED THAT PIPES ARE SHIFTING TO THE LEFT
+    dx : 2,     //SPEED OF PIPES MOVING TO THE LEFT
 
     position: [],   //STORES THE POSITION OF THE PIPES
     maxYPos : -150,
@@ -220,10 +220,10 @@ const pipes = {
     },
 
     update: function() {
-        if(gameState.current != gameState.game) return;    //NO NEW PIPES WHEN NOT GAME STATE
+        if(gameState.current != gameState.game) return;    //NO NEW PIPES WHEN IT'S NOT GAME STATE
 
-        if(frames%50 == 0) {        //NEW PIPES EVERY 50 FRAMES
-            this.position.push({    //ADD PIPES TO POSITION ARRAY
+        if(frames%50 == 0) {
+            this.position.push({    //ADD PIPES TO POSITION ARRAY EVERY 50 FRAMES
                 x: cvs.width,
                 y: this.maxYPos * (Math.random() + 1)   //GENERATES PIPE AT RANDOM Y POSITIONS BETWEEN -150 AND -300
             });
