@@ -93,8 +93,11 @@ const foreground = {
         },
 
     update: function() {
-        if(gameState.current == gameState.game) {      //FOREGROUND ONLY MOVES DURING GAME STATE
-            this.x = (this.x -this.dx) % (this.w/2);    //MODULO RESETS THE SPRITE POSITION BACK TO 0
+        if(gameState.current == gameState.getReady) {  
+            this.x = (this.x -this.dx/2) % (this.w/2);    //MODULO RESETS THE SPRITE POSITION BACK TO 0
+        }
+        else if(gameState.current == gameState.game) { //FOREGROUND MOVES FASTER DURING GAME STATE
+            this.x = (this.x -this.dx) % (this.w/2)
         }
     }
 }
@@ -135,8 +138,8 @@ const bird = {
     },
 
     update: function() {
-        //THE BIRD FLAPS SLOWLY AT READY SCREEN, AND FASTER WHEN GAME STARTS
-        this.period = gameState.current == gameState.getReady ? 8 : 4;  
+        //THE BIRD FLAPS SLOWLY AT READY SCREEN AND FASTER WHEN GAME STARTS
+        this.period = gameState.current == gameState.getReady ? 12 : 6;  
         //BIRD ANIMATION FRAME INCREMENTED BY 1 EVERY PERIOD
         this.frame += frames % this.period == 0 ? 1 : 0;
         //RESET ANIMATION EVERY TIME THE FRAME COUNT REACHES 4 WHICH IS THE LENGTH OF THE ANIMATION ARRAY
@@ -245,7 +248,7 @@ const pipes = {
                     gameState.current = gameState.over;
                 }
 
-            //GARBAGE SCORING SYSTEM NEEDS OPTIMIZING
+            //GARBAGE SCORING SYSTEM THAT NEEDS OPTIMIZING
             if(p.x == bird.x - bird.radius*5) {
                 score.value += 1;
                 scoreSound.play();
